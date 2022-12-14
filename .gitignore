@@ -1,4 +1,5 @@
 *.pth
 *.csv
+*.pkl
 save_dir/
 __pycache__
