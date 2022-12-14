@@ -1,0 +1,55 @@
+{
+    "name": "PetPoc",
+    "n_gpu": 1,
+    "arch": {
+        "type": "SarModel",
+        "args": {
+            "num_cat_pkl_path": "../data/num_cat_dict.yml",
+            "emb_feat_dim": 32,
+            "hidden_size": 256,
+            "hidden_size_coeff": 4,
+            "dropout": 0.4,
+            "temporal_aggregator_type": "TemporalDebertaAggregator",
+            "temporal_aggregator_args": {
+                "hidden_size": 256,
+                "num_layers": 3,
+                "dropout": 0.3,
+                "max_len": 1024
+            }
+        }
+    },
+    "data_loader": {
+        "type": "MaxLenDataLoader",
+        "args": {
+            "data_path": "../data/cust_data.pkl",
+            "max_len": 1024,
+            "batch_size": 64,
+            "shuffle": true,
+            "validation_split": 0.2,
+            "num_workers": 0,
+            "fold_idx": 0,
+            "training": false
+        }
+    },
+    "optimizer": {
+        "type": "Ranger",
+        "args": {
+            "lr": 0.0001,
+            "weight_decay": 1e-05
+        }
+    },
+    "loss": "focal_cost_sensetive_bce",
+    "metrics": [
+        "recall_n"
+    ],
+    "trainer": {
+        "epochs": 100,
+        "save_dir": "../save_dir/baseline",
+        "save_period": 1,
+        "verbosity": 2,
+        "monitor": "min val_loss",
+        "early_stop": 4,
+        "training": false,
+        "tensorboard": false
+    }
+}
