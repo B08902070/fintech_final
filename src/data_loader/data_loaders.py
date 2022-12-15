@@ -125,7 +125,7 @@ class MaxLenDataLoader(BaseDataLoader):
         cls = self.__class__
         print('Preprocessing data.......')
         preprocess_data = get_preprocess_data()
-        self.dataset = cls.InnerDataset(preprocess_data, datatraining=training)
+        self.dataset = cls.InnerDataset(preprocess_data, training=training)
         self.training = training
         super().__init__(
             self.dataset, 
