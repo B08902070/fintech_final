@@ -37,7 +37,7 @@ class MaxLenDataLoader(BaseDataLoader):
         def __init__(self, data_path, max_len=512, training=True, num_data=-1):
             self.training = training
             self.max_len = max_len
-            self.num_data = num_data if num_data != -1 else 30_000
+            self.num_data = num_data if num_data != -1 else 30000
             self.load_xs(data_path)
 
         def load_xs(self, data_path):
