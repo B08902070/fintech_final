@@ -10,7 +10,7 @@ from torch.utils.data import Dataset
 
 from base import BaseDataLoader
 from process_data.data_config import CONFIG_MAP, DATA_SOURCES
-from process_data.utils import load_pickle, get_feats_name
+from process_data.utils import get_feats_name
 from prepare_dataset.prepare_dataset import get_preprocess_data
 
 # def padding_mask_collate(batch):
@@ -42,7 +42,7 @@ class MaxLenDataLoader(BaseDataLoader):
             self.load_xs(preprocess_data)
 
         def load_xs(self, preprocess_data):
-            print('loading data')
+            print(f'loading data, num_data={self.num_data}')
             self.data = []
             data_count = 0
             for k, v in preprocess_data.items():

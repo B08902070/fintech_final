@@ -34,10 +34,6 @@ def get_preprocess_data():
     answer = pd.read_csv(ANSWER_PATH)
     sample = pd.read_csv(SAMPLE_PATH)
 
-    names = ['ccba', 'cdtx', 'custinfo', 'dp', 'remit', 'pdate', 'tdate', 'answer', 'sample']
-    datas = [ccba, cdtx, cinfo, dp, remit, pdate, tdate, answer, sample]
-    num_files = len(datas)
-        
     date = pd.concat([pdate, tdate], axis=0)
     cinfo = cinfo.merge(date, on='alert_key', how='left')
     cinfo = cinfo.merge(answer, on='alert_key', how='left')
@@ -53,7 +49,8 @@ def get_preprocess_data():
 
     def process_numerical(col):
         col = normalize(col)
-        col = np.nan_to_num(col, nan=0)
+        mean = np.mean(col)
+        col = np.nan_to_num(col, nan=mean)
         return col
 
 
