@@ -10,8 +10,7 @@ from torch.utils.data import Dataset
 
 from base import BaseDataLoader
 from process_data.data_config import CONFIG_MAP, DATA_SOURCES
-from process_data.utils import get_feats_name
-from prepare_dataset.prepare_dataset import get_preprocess_data
+from process_data.utils import get_feats_name, load_pickle
 
 # def padding_mask_collate(batch):
 #     """
@@ -35,17 +34,18 @@ def batch_index_collate(data):
 
 class MaxLenDataLoader(BaseDataLoader):
     class InnerDataset(Dataset):
-        def __init__(self, preprocess_data, max_len=512, training=True, num_data=-1):
+        def __init__(self, data_path, max_len=512, training=True, num_data=-1):
             self.training = training
             self.max_len = max_len
             self.num_data = num_data if num_data != -1 else 30000
-            self.load_xs(preprocess_data)
+            self.load_xs(data_path)
 
-        def load_xs(self, preprocess_data):
-            print(f'loading data, num_data={self.num_data}')
+        def load_xs(self, data_path):
+            print('loading data')
             self.data = []
             data_count = 0
-            for k, v in preprocess_data.items():
+            pkl = load_pickle(data_path)
+            for k, v in pkl.items():
                 masks = v.train_mask if self.training else v.test_mask
                 for e in masks:
                     e += 1
@@ -124,8 +124,7 @@ class MaxLenDataLoader(BaseDataLoader):
                  batch_size=128, shuffle=True, fold_idx=-1, validation_split=0.0, num_workers=1, training=True):
         cls = self.__class__
         print('Preprocessing data.......')
-        preprocess_data = get_preprocess_data()
-        self.dataset = cls.InnerDataset(preprocess_data, training=training)
+        self.dataset = cls.InnerDataset(data_path, training=training)
         self.training = training
         super().__init__(
             self.dataset, 
