@@ -23,10 +23,10 @@
         "args": {
             "data_path": "../data/cust_data.pkl",
             "max_len": 1024,
-            "batch_size": 32,
+            "batch_size": 64,
             "shuffle": true,
             "validation_split": 0.2,
-            "num_workers": 0,
+            "num_workers": 1,
             "fold_idx": 0,
             "training": true
         }
