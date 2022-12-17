@@ -63,7 +63,7 @@ def prepare_data(args):
         [cinfo, DataSource.CUSTINFO],
     ]
 
-    impute(args.impute_num, args.impute_cat, datas)
+    datas = impute(args.impute_num, args.impute_cat, datas)
     print('impute finish')
 
     # process numerical and categorical and data_source
