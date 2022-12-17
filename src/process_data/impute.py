@@ -91,8 +91,8 @@ IMPUTE_CATEGORICAL={
 }
 
 def impute(impute_num, impute_cat, datas):
-    impute_num_fn = getattr(IMPUTE_NUMERICAL, impute_num)
-    impute_cat_fn = getattr(IMPUTE_CATEGORICAL, impute_cat)
+    impute_num_fn = IMPUTE_NUMERICAL[impute_num]
+    impute_cat_fn = IMPUTE_CATEGORICAL[impute_cat]
 
     for i in range(len(datas)):
         data, data_source = datas[i]
