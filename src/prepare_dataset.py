@@ -139,7 +139,7 @@ def prepare_data(args):
             'cust_data': cust_data,
         })
 	
-    save_pickle(ret_data, f'../data/cust_data_{}.pkl')
+    save_pickle(ret_data, f'../data/cust_data_{args.impute_num}_{args.impute_cat}.pkl')
 
 
 if __name__ == '__main__':
