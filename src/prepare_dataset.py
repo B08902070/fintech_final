@@ -56,11 +56,11 @@ def prepare_data(args):
         return col
 
     datas = [
-        (ccba, DataSource.CCBA), 
-        (cdtx, DataSource.CDTX),
-        (dp, DataSource.DP),
-        (remit, DataSource.REMIT),
-        (cinfo, DataSource.CUSTINFO),
+        [ccba, DataSource.CCBA], 
+        [cdtx, DataSource.CDTX],
+        [dp, DataSource.DP],
+        [remit, DataSource.REMIT],
+        [cinfo, DataSource.CUSTINFO],
     ]
 
     impute(args.impute_num, args.impute_cat, datas)
