@@ -1,4 +1,4 @@
-import pickle
+import argparse 
 
 from sklearn.preprocessing import QuantileTransformer
 import numpy as np
@@ -6,24 +6,23 @@ from easydict import EasyDict as edict
 import pandas as pd
 from tqdm import tqdm
 
-from process_data.data_config import (DataSource, FeatureType, CCBAConfig, CDTXConfig, DPConfig, REMITConfig, CUSTINFOConfig, CONFIG_MAP)
-from process_data.utils import load_yaml, save_yaml, save_pickle, load_pickle
-from pandas_profiling import ProfileReport
+from process_data.data_config import (DataSource, FeatureType, CONFIG_MAP)
+from process_data.utils import save_pickle
+from process_data.impute import impute
 
-def get_preprocess_data():
-    TRAIN_DIR = 'train_first'
+TRAIN_DIR = 'train_first'
 
-    CCBA_PATH = '../raw_dataset/public_train_x_ccba_full_hashed.csv'
-    CDTX_PATH = '../raw_dataset/public_train_x_cdtx0001_full_hashed.csv'
-    CUSTINFO_PATH = '../raw_dataset/public_train_x_custinfo_full_hashed.csv'
-    DP_PATH = '../raw_dataset/public_train_x_dp_full_hashed.csv'
-    REMIT_PATH = '../raw_dataset/public_train_x_remit1_full_hashed.csv'
-    PDATE_PATH = '../raw_dataset/public_x_alert_date.csv'
-    TDATE_PATH = '../raw_dataset/train_x_alert_date.csv'
-    ANSWER_PATH = '../raw_dataset/train_y_answer.csv'
-    SAMPLE_PATH = '../raw_dataset/sample.csv'
+CCBA_PATH = '../raw_dataset/public_train_x_ccba_full_hashed.csv'
+CDTX_PATH = '../raw_dataset/public_train_x_cdtx0001_full_hashed.csv'
+CUSTINFO_PATH = '../raw_dataset/public_train_x_custinfo_full_hashed.csv'
+DP_PATH = '../raw_dataset/public_train_x_dp_full_hashed.csv'
+REMIT_PATH = '../raw_dataset/public_train_x_remit1_full_hashed.csv'
+PDATE_PATH = '../raw_dataset/public_x_alert_date.csv'
+TDATE_PATH = '../raw_dataset/train_x_alert_date.csv'
+ANSWER_PATH = '../raw_dataset/train_y_answer.csv'
+SAMPLE_PATH = '../raw_dataset/sample.csv'
 
-
+def prepare_data(args):
     ccba = pd.read_csv(CCBA_PATH)
     cdtx = pd.read_csv(CDTX_PATH)
     cinfo = pd.read_csv(CUSTINFO_PATH)
@@ -49,13 +48,9 @@ def get_preprocess_data():
 
     def process_numerical(col):
         col = normalize(col)
-        mean = np.mean(col)
-        col = np.nan_to_num(col, nan=mean)
         return col
 
-
     def process_catgorical(col):
-        col.fillna('NULL', inplace=True)
         map_dict = {v:i for i, v in enumerate(set(col.unique()))}
         col = col.map(map_dict)
         return col
@@ -68,7 +63,7 @@ def get_preprocess_data():
         (cinfo, DataSource.CUSTINFO),
     ]
 
-    num_cat_dict = {}
+    impute(args.impute_num, args.impute_cat, datas)
 
     # process numerical and categorical and data_source
     for data, data_source in datas:
@@ -81,10 +76,6 @@ def get_preprocess_data():
                 numericals.append(col)
             elif feature_type == FeatureType.CATEGORICAL:
                 data[col] = process_catgorical(data[col].copy())
-                num_cat = data[col].nunique()
-                if data_source not in num_cat_dict:
-                    num_cat_dict[data_source] = {}
-                num_cat_dict[data_source][col] = num_cat
 
         if numericals:
             data[numericals] = process_numerical(data[numericals].copy())
@@ -148,4 +139,14 @@ def get_preprocess_data():
             'cust_data': cust_data,
         })
 	
-    return ret_data
+    save_pickle(ret_data, f'../data/cust_data_{}.pkl')
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument("impute_num", default='zero_fill', help='impute method for missing numerical data')
+    parser.add_argument("impute_cat", default='zero_null', help='impute method for missing categorical data')
+
+    args = parser.parse_args()
+
+    prepare_data(args)

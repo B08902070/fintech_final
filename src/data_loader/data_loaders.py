@@ -123,7 +123,6 @@ class MaxLenDataLoader(BaseDataLoader):
                  data_path, max_len=512,
                  batch_size=128, shuffle=True, fold_idx=-1, validation_split=0.0, num_workers=1, training=True):
         cls = self.__class__
-        print('Preprocessing data.......')
         self.dataset = cls.InnerDataset(data_path, training=training)
         self.training = training
         super().__init__(
