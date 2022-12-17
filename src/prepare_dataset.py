@@ -144,8 +144,8 @@ def prepare_data(args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument("impute_num", default='zero_fill', help='impute method for missing numerical data')
-    parser.add_argument("impute_cat", default='zero_null', help='impute method for missing categorical data')
+    parser.add_argument("--impute_num", default='zero_fill', help='impute method for missing numerical data')
+    parser.add_argument("--impute_cat", default='zero_null', help='impute method for missing categorical data')
 
     args = parser.parse_args()
 
