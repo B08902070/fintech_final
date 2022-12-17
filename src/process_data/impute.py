@@ -111,10 +111,9 @@ def impute(impute_num, impute_cat, datas):
 
         num_data = impute_num_fn(pd.DataFrame(num_list).T)
         cat_data = impute_cat_fn(pd.DataFrame(cat_list).T)
-        if sar_flag_col is None:
-            datas[i][0] = pd.concat([num_data, cat_data, sar_flag_col])
-        else:
-            datas[i][0] = pd.concat([num_data, cat_data])
+        datas[i][0] = num_data.join(cat_data)
+        if sar_flag_col is not None:
+            datas[i][0] = datas[i][0].join(sar_flag_col)
 
     return datas
 
