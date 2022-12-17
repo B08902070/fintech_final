@@ -109,12 +109,12 @@ def impute(impute_num, impute_cat, datas):
             elif feature_type == FeatureType.CATEGORICAL:
                 cat_list += [data[col].copy()]
 
-        num_list = impute_num_fn(num_list)
-        cat_list = impute_cat_fn(cat_list)
+        num_data = impute_num_fn(pd.DataFrame(num_list))
+        cat_data = impute_cat_fn(pd.DataFrame(cat_list))
         if sar_flag_col == None:
-            datas[i][0] = pd.DataFrame(num_list+cat_list+[sar_flag_col])
+            datas[i][0] = pd.concat([num_data, cat_data, sar_flag_col])
         else:
-            datas[i][0] = pd.DataFrame(num_list+cat_list)
+            datas[i][0] = pd.concat([num_data, cat_data])
 
     return datas
 
