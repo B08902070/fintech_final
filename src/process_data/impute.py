@@ -115,7 +115,8 @@ def impute(impute_num, impute_cat, datas):
         if sar_flag_col is not None:
             datas[i][0] = datas[i][0].join(sar_flag_col)
 
-    print(datas.columns)
+    for d in datas:
+        print(d.columns)
     return datas
 
 
