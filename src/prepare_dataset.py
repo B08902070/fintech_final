@@ -64,6 +64,7 @@ def prepare_data(args):
     ]
 
     impute(args.impute_num, args.impute_cat, datas)
+    print('impute finish')
 
     # process numerical and categorical and data_source
     for data, data_source in datas:
