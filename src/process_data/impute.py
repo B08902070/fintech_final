@@ -104,7 +104,7 @@ def impute(impute_num, impute_cat, datas):
             feature_type = getattr(config, col)
             if col == 'sar_flag':
                 sar_flag_col = data[col].copy()
-            if feature_type == FeatureType.NUMERICAL:
+            elif feature_type == FeatureType.NUMERICAL:
                 num_list += [data[col].copy()]
             elif feature_type == FeatureType.CATEGORICAL:
                 cat_list += [data[col].copy()]
