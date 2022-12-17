@@ -116,7 +116,7 @@ def impute(impute_num, impute_cat, datas):
             datas[i][0] = datas[i][0].join(sar_flag_col)
 
     for d in datas:
-        print(d.columns)
+        print(d[0].columns)
     return datas
 
 
