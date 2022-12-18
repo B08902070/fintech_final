@@ -13,33 +13,45 @@ from process_data.data_config import FeatureType, CONFIG_MAP
 
 """Impute missing data: Numerical"""
 
-def fill_zero(col, target_data, refer_data):
-    target_data.fillna(0, inplace=True)
-    return target_data
+def fill_zero(col, data_list):
+    num_data, cat_data = data_list
+    num_data[col].fillna(0, inplace=True)
+    return num_data[col]
 
-def fill_mean(col, target_data, refer_data):
+def fill_mean(col, data_list):
+    num_data, cat_data = data_list
     imputer = SimpleImputer(missing_values=np.nan, strategy='mean')
-    target_data.values[:] = imputer.fit_transform(target_data)
-    return target_data
+    num_data[col].values[:] = imputer.fit_transform(num_data[col])
+    return num_data[col]
 
-def fill_median(col, target_data, refer_data):
+def fill_median(col, data_list):
+    num_data, cat_data = data_list
     imputer = SimpleImputer(missing_values=np.nan, strategy='median')
-    target_data.values[:] = imputer.fit_transform(target_data)
-    return target_data
+    num_data[col].values[:] = imputer.fit_transform(num_data[col])
+    return num_data[col]
 
-def bayesian(col, target_data, refer_data):
+def bayesian(col, data_list):
+    num_data, cat_data = data_list
+    cat_data = pd.get_dummies(cat_data)
+    new_data = num_data.join(cat_data)
     imputer = IterativeImputer(estimator=BayesianRidge(), random_state=0)
-    imputer.fit(refer_data)
-    target_data.values[:] = imputer.transform(target_data)
-    return target_data
+    new_data.values[:] = imputer.fit_transform(new_data)
 
-def extra_tree(col, target_data, refer_data):
+    return new_data[col]
+
+def extra_tree(col, data_list):
+    num_data, cat_data = data_list
+    cat_data = pd.get_dummies(cat_data)
+    new_data = num_data.join(cat_data)
     imputer = IterativeImputer(estimator=ExtraTreesRegressor(n_estimators=10, random_state=0), random_state=0)
-    imputer.fit(refer_data)
-    target_data.values[:] = imputer.transform(target_data)
-    return target_data
+    new_data.values[:] = imputer.fit_transform(new_data)
 
-def xgboost_imp(col, target_data, refer_data):
+    return new_data[col]
+
+def xgboost_imp(col, data_list):
+    num_data, cat_data = data_list
+    cat_data = pd.get_dummies(cat_data)
+    new_data = num_data.join(cat_data)
     imputer = IterativeImputer(
         estimator=xgboost.XGBRegressor(
             n_estimators=5,
@@ -53,27 +65,35 @@ def xgboost_imp(col, target_data, refer_data):
         verbose=2,
         random_state=1
     )
-    imputer.fit(refer_data)
-    target_data.values[:] = imputer.transform(target_data)
-    return target_data
+    new_data.values[:] = imputer.fit_transform(new_data)
+
+    return new_data[col]
 
 
 
 """Impute  missing data : Categorical"""
-def fill_null(col, target_data, refer_data):
-    target_data.fillna('NULL', inplace=True)
-    return target_data
+def fill_null(col, data_list):
+    num_data, cat_data = data_list
+    cat_data[col].fillna('NULL', inplace=True)
+    return cat_data[col]
 
-def most_freq(col, target_data, refer_data):
+def most_freq(col, data_list):
+    num_data, cat_data = data_list
     imputer = SimpleImputer(missing_values=np.nan, strategy='most_frequent')
-    target_data.values[:] = imputer.fit_transform(target_data)
-    return target_data
+    cat_data[col].values[:] = imputer.fit_transform(cat_data[col])
+    return cat_data[col]
 
-def knnc(col, target_data, refer_data):
+def knnc(col, data_list):
+    num_data, cat_data = data_list
+    target = cat_data[col]
+    target = pd.Categorical(target).codes
+    del cat_data[col]
+    cat_data = pd.get_dummies(cat_data)
+    new_data = num_data.join(cat_data).join(target)
     imputer = KNNImputer(n_neighbors=10, weights='uniform')
-    imputer.fit(refer_data)
-    target_data.values[:] = imputer.transform(target_data)
-    return target_data
+    new_data.values[:] = imputer.fit_transform(new_data)
+
+    return new_data[col]
 
 
 
@@ -113,9 +133,7 @@ def impute(impute_num, impute_cat, datas):
             elif feature_type == FeatureType.CATEGORICAL:
                 cat_list += [data[col].copy()]
         num_data, cat_data = pd.DataFrame(num_list).T, pd.DataFrame(cat_list).T
-        if not cat_data.empty:
-            cat_data = pd.get_dummies(cat_data)
-        refer_data = num_data.join(cat_data)
+        data_list = [num_data, cat_data]
 
         """Impute data"""
         for col in cols:
@@ -124,8 +142,8 @@ def impute(impute_num, impute_cat, datas):
                 continue
 
             if feature_type == FeatureType.NUMERICAL:
-                datas[i][0][col] = impute_num_fn(col, data[col].copy(), refer_data).astype('int32')
+                datas[i][0][col] = impute_num_fn(col, data_list).astype('int32')
             elif feature_type == FeatureType.CATEGORICAL:
-                datas[i][0][col] = impute_cat_fn(col, data[col].copy(), refer_data).astype('category')
+                datas[i][0][col] = impute_cat_fn(col, data_list).astype('category')
         
     return datas
