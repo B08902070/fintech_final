@@ -86,7 +86,7 @@ def most_freq(col, data_list):
 def knnc(col, data_list):
     num_data, cat_data = data_list
     target = cat_data[col]
-    target = pd.Categorical(target).codes
+    target.values[:] = pd.Categorical(target).codes
     del cat_data[col]
     cat_data = pd.get_dummies(cat_data)
     new_data = num_data.join(cat_data).join(target)
@@ -94,8 +94,6 @@ def knnc(col, data_list):
     new_data.values[:] = imputer.fit_transform(new_data)
 
     return new_data[col]
-
-
 
 
 
