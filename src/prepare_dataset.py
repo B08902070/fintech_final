@@ -63,6 +63,12 @@ def prepare_data(args):
         [cinfo, DataSource.CUSTINFO],
     ]
 
+    for data, data_source in datas:
+        print(data_source)
+        cols = data.columns
+        for col in cols:
+            print(f'for {col}: {data[col].isna().sum()}')
+            
     datas = impute(args.impute_num, args.impute_cat, datas)
     print('impute finish')
 
