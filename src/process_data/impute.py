@@ -113,7 +113,8 @@ def impute(impute_num, impute_cat, datas):
             elif feature_type == FeatureType.CATEGORICAL:
                 cat_list += [data[col].copy()]
         num_data, cat_data = pd.DataFrame(num_list).T, pd.DataFrame(cat_list).T
-        cat_data = pd.get_dummies(cat_data)
+        if not cat_data.empty
+            cat_data = pd.get_dummies(cat_data)
         refer_data = num_data.join(cat_data)
 
         """Impute data"""
