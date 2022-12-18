@@ -69,6 +69,7 @@ def most_freq(data):
 
 def knnc(data):
     imputer = KNNImputer(n_neighbors=10, weights='uniform')
+    data = data.astype('string')
     data.values[:] = imputer.fit_transform(data)
     return data
 
