@@ -19,7 +19,7 @@ def fill_zero(col, ref_data):
 
 def fill_mean(col, ref_data):
     imputer = SimpleImputer(missing_values=np.nan, strategy='mean')
-    ref_data[col].values[:] = imputer.fit_transform(ref_data[col])
+    ref_data.values[:] = imputer.fit_transform(ref_data)
     return ref_data[col]
 
 def fill_median(col, ref_data):
