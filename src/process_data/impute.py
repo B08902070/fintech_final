@@ -106,10 +106,11 @@ def impute(impute_num, impute_cat, data, data_source):
     """make refernce data"""
     for col in cols:
         feature_type = getattr(config, col)
-        if col != 'sar_flag' and feature_type in [FeatureType.NUMERICAL, FeatureType.DATE]:
+        if feature_type in [FeatureType.NUMERICAL, FeatureType.DATE]:
             num_list += [data[col].copy()]
-        elif feature_type == FeatureType.CATEGORICAL:
+        elif col != 'sar_flag' and feature_type == FeatureType.CATEGORICAL:
             cat_list += [data[col].copy()]
+
     num_data, cat_data = pd.DataFrame(num_list).T, pd.DataFrame(cat_list).T
     ref_data = num_data.join(cat_data)
 
