@@ -110,13 +110,15 @@ def impute(impute_num, impute_cat, datas):
                 cat_list += [data[col].copy()]
             else:
                 others += [data[col].copy()]
+
+        new_data = pd.DataFrame(others).T
         if not len(num_list) == 0:
             num_data = impute_num_fn(pd.DataFrame(num_list).T)
+            new_data = new_data.join(num_data)
         if not len(cat_list)==0:
             cat_data = impute_cat_fn(pd.DataFrame(cat_list).T)
-        others = pd.DataFrame(others).T
-        new_data = others.join(num_data)
-        new_data = new_data.join(cat_data)
+            new_data = new_data.join(cat_data)
+
         if sar_flag_col is not None:
             new_data = new_data.join(sar_flag_col)
         datas[i][0] = new_data
