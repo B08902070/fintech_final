@@ -92,15 +92,14 @@ IMPUTE_CATEGORICAL={
 }
 
 def impute(impute_num, impute_cat, data, data_source):
-    impute_num_fn = IMPUTE_NUMERICAL[impute_num]
-    impute_cat_fn = IMPUTE_CATEGORICAL[impute_cat]
-
-
     if data.isna().sum().sum  == 0:
         return data
+
     if data_source == DataSource.DP:
         data['debit_credit'].values[:] = pd.Categorical(data['debit_credit']).codes
 
+    impute_num_fn = IMPUTE_NUMERICAL[impute_num]
+    impute_cat_fn = IMPUTE_CATEGORICAL[impute_cat]
     config = CONFIG_MAP[data_source]
     cols = data.columns
     num_list, cat_list, others=[], [], []
