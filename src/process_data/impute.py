@@ -18,10 +18,12 @@ def fill_zero(data):
     return data
 
 def fill_mean(data):
+    print(data)
+    print('----------------------')
     imputer = SimpleImputer(missing_values=np.nan, strategy='mean')
-    ret = imputer.fit_transform(data)
-    print(ret)
-    return pd.DataFrame(ret)
+    data.values[:] = imputer.fit_transform(data)
+    print(data)
+    return pd.DataFrame(data)
 
 def fill_median(data):
     imputer = SimpleImputer(missing_values=np.nan, strategy='median')
