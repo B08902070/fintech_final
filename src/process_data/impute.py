@@ -112,7 +112,7 @@ def impute(impute_num, impute_cat, datas):
                 others += [data[col].copy()]
         if not num_data.empty:
             num_data = impute_num_fn(pd.DataFrame(num_list).T)
-        if not cat_data.empty
+        if not cat_data.empty:
             cat_data = impute_cat_fn(pd.DataFrame(cat_list).T)
         others = pd.DataFrame(others).T
         new_data = others.join(num_data)
