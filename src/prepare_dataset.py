@@ -70,23 +70,30 @@ def prepare_data(args):
         for col in cols:
             print(f'for {col}: {data[col].isna().sum()}')
 
-    datas = impute(args.impute_num, args.impute_cat, datas)
-    print('impute finish')
 
     # process numerical and categorical and data_source
     for data, data_source in datas:
         config = CONFIG_MAP[data_source]
         cols = data.columns
+
+        """normalize numerical data"""
         numericals = []
         for col in cols:
             feature_type = getattr(config, col)
-            if feature_type == FeatureType.NUMERICAL and col != 'sar_flag':
+            if feature_type == FeatureType.NUMERICAL:
                 numericals.append(col)
-            elif feature_type == FeatureType.CATEGORICAL:
-                data[col] = process_catgorical(data[col].copy())
 
         if numericals:
             data[numericals] = process_numerical(data[numericals].copy())
+
+        """impute"""
+        data = impute(args.impute_num, args.impute_cat, data, data_source)
+
+        """encode categorical data"""
+        for col in cols:
+            feature_type = getattr(config, col)
+            if feature_type == FeatureType.CATEGORICAL and col != 'sar_flag':
+                data[col] = process_catgorical(data[col].copy())
         data['data_source'] = data_source
 
 

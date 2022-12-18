@@ -91,38 +91,38 @@ IMPUTE_CATEGORICAL={
     'knnc': knnc
 }
 
-def impute(impute_num, impute_cat, datas):
+def impute(impute_num, impute_cat, data, data_source):
     impute_num_fn = IMPUTE_NUMERICAL[impute_num]
     impute_cat_fn = IMPUTE_CATEGORICAL[impute_cat]
 
-    for i in range(len(datas)):
-        data, data_source = datas[i]
-        if data.isna().sum().sum  == 0:
+
+    if data.isna().sum().sum  == 0:
+        return data
+    if data_source == DataSource.DP:
+        data['debit_credit'].values[:] = pd.Categorical(data['debit_credit']).codes
+
+    config = CONFIG_MAP[data_source]
+    cols = data.columns
+    num_list, cat_list, others=[], [], []
+    """make refernce data"""
+    for col in cols:
+        feature_type = getattr(config, col)
+        if col != 'sar_flag' and feature_type in [FeatureType.NUMERICAL, FeatureType.DATE]:
+            num_list += [data[col].copy()]
+        elif feature_type == FeatureType.CATEGORICAL:
+            cat_list += [data[col].copy()]
+    num_data, cat_data = pd.DataFrame(num_list).T, pd.DataFrame(cat_list).T
+    ref_data = num_data.join(cat_data)
+
+    """Impute data"""
+    for col in cols:
+        feature_type = getattr(config, col)
+        if col == 'sar_flag' or data[col].isna().sum() == 0:
             continue
-        if data_source == DataSource.DP:
-            data['debit_credit'].values[:] = pd.Categorical(data['debit_credit']).codes
-        config = CONFIG_MAP[data_source]
-        cols = data.columns
-        num_list, cat_list, others=[], [], []
-        """make refernce data"""
-        for col in cols:
-            feature_type = getattr(config, col)
-            if col != 'sar_flag' and feature_type in [FeatureType.NUMERICAL, FeatureType.DATE]:
-                num_list += [data[col].copy()]
-            elif feature_type == FeatureType.CATEGORICAL:
-                cat_list += [data[col].copy()]
-        num_data, cat_data = pd.DataFrame(num_list).T, pd.DataFrame(cat_list).T
-        ref_data = num_data.join(cat_data)
 
-        """Impute data"""
-        for col in cols:
-            feature_type = getattr(config, col)
-            if col == 'sar_flag' or data[col].isna().sum() == 0:
-                continue
-
-            if feature_type == FeatureType.NUMERICAL:
-                datas[i][0][col] = impute_num_fn(col, ref_data).astype('int32')
-            elif feature_type == FeatureType.CATEGORICAL:
-                datas[i][0][col] = impute_cat_fn(col, ref_data).astype('category')
+        if feature_type == FeatureType.NUMERICAL:
+            data[col] = impute_num_fn(col, ref_data).astype('int32')
+        elif feature_type == FeatureType.CATEGORICAL:
+            data[col] = impute_cat_fn(col, ref_data).astype('category')
         
-    return datas
+    return data
