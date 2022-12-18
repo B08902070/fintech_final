@@ -98,7 +98,7 @@ def impute(impute_num, impute_cat, datas):
         data, data_source = datas[i]
         config = CONFIG_MAP[data_source]
         cols = data.columns
-        num_list, cat_list=[], []
+        num_list, cat_list, others=[], [], []
         sar_flag_col=None
         for col in cols:
             feature_type = getattr(config, col)
@@ -108,12 +108,18 @@ def impute(impute_num, impute_cat, datas):
                 num_list += [data[col].copy()]
             elif feature_type == FeatureType.CATEGORICAL:
                 cat_list += [data[col].copy()]
+            else:
+                others += [data[col].copy()]
 
         num_data = impute_num_fn(pd.DataFrame(num_list).T)
         cat_data = impute_cat_fn(pd.DataFrame(cat_list).T)
-        datas[i][0] = num_data.join(cat_data)
+        others = pd.DataFrame(others).T
+        new_data = others.join(num_data)
+        new_data = new_data.join(cat_data)
         if sar_flag_col is not None:
-            datas[i][0] = datas[i][0].join(sar_flag_col)
+            new_data = new_data.join(sar_flag_col)
+        datas[i][0] = new_data
+        
 
     for d in datas:
         print(d[0].columns)
