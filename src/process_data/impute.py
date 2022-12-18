@@ -97,6 +97,8 @@ def impute(impute_num, impute_cat, datas):
 
     for i in range(len(datas)):
         data, data_source = datas[i]
+        if data.isna().sum().sum  == 0:
+            continue
         config = CONFIG_MAP[data_source]
         cols = data.columns
         num_list, cat_list, others=[], [], []
@@ -105,12 +107,10 @@ def impute(impute_num, impute_cat, datas):
             feature_type = getattr(config, col)
             if col == 'sar_flag':
                 sar_flag_col = data[col].copy()
-            elif feature_type == FeatureType.NUMERICAL:
+            elif feature_type in [FeatureType.NUMERICAL, FeatureType.DATE]:
                 num_list += [data[col].copy()]
-            elif feature_type == FeatureType.CATEGORICAL:
+            elif feature_type in [FeatureType.CATEGORICAL, FeatureType.ID]:
                 cat_list += [data[col].copy()]
-            else:
-                others += [data[col].copy()]
 
         new_data = pd.DataFrame(others).T
         if not len(num_list) == 0:

@@ -66,9 +66,10 @@ def prepare_data(args):
     for data, data_source in datas:
         print(data_source)
         cols = data.columns
+        print('data:', data.isna().sum().sum())
         for col in cols:
             print(f'for {col}: {data[col].isna().sum()}')
-            
+
     datas = impute(args.impute_num, args.impute_cat, datas)
     print('impute finish')
 
