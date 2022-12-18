@@ -20,22 +20,22 @@ def fill_zero(data):
 def fill_mean(data):
     imputer = SimpleImputer(missing_values=np.nan, strategy='mean')
     ret = imputer.fit_transform(data)
-    return ret
+    return pd.DataFrame(ret)
 
 def fill_median(data):
     imputer = SimpleImputer(missing_values=np.nan, strategy='median')
     ret = imputer.fit_transform(data)
-    return ret
+    return pd.DataFrame(ret)
 
 def bayesian(data):
     imputer = IterativeImputer(estimator=BayesianRidge(), random_state=0)
     ret = imputer.fit_transform(data)
-    return ret
+    return pd.DataFrame(ret)
 
 def extra_tree(data):
     imputer = IterativeImputer(estimator=ExtraTreesRegressor(n_estimators=10, random_state=0), random_state=0)
     ret = imputer.fit_transform(data)
-    return ret
+    return pd.DataFrame(ret)
 
 def xgboost_imp(data):
     imputer = IterativeImputer(
@@ -65,12 +65,12 @@ def fill_null(data):
 def most_freq(data):
     imputer = SimpleImputer(missing_values=np.nan, strategy='most_frequent')
     ret = imputer.fit_transform(data)
-    return ret
+    return pd.DataFrame(ret)
 
 def knnc(data):
     imputer = KNNImputer(n_neighbors=10, weights='uniform')
     ret = imputer.fit_transform(data)
-    return ret
+    return pd.DataFrame(ret)
 
 
 
