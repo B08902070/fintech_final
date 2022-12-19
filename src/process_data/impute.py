@@ -70,7 +70,7 @@ def most_freq(col, ref_data):
     return ref_data[col]
 
 def knnc(col, ref_data):
-    imputer = KNNImputer(n_neighbors=5, weights='uniform')
+    imputer = KNNImputer(n_neighbors=3, weights='uniform')
     ref_data.values[:] = imputer.fit_transform(ref_data)
 
     return ref_data[col]
