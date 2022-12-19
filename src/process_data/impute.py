@@ -34,7 +34,7 @@ def bayesian(col, ref_data):
     return ref_data[col]
 
 def extra_tree(col, ref_data):
-    imputer = IterativeImputer(estimator=ExtraTreesRegressor(n_estimators=10, random_state=0), random_state=0)
+    imputer = IterativeImputer(estimator=ExtraTreesRegressor(n_estimators=50, random_state=0, min_samples_split=1), random_state=0)
     ref_data.values[:] = imputer.fit_transform(ref_data)
 
     return ref_data[col]
