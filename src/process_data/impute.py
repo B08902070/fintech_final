@@ -33,6 +33,7 @@ def bayesian(col, ref_data):
 
     return ref_data[col]
 
+# may have error
 def extra_tree(col, ref_data):
     imputer = IterativeImputer(estimator=ExtraTreesRegressor(n_estimators=50, random_state=0, min_samples_split=1), random_state=0)
     ref_data.values[:] = imputer.fit_transform(ref_data)
@@ -69,6 +70,7 @@ def most_freq(col, ref_data):
     ref_data.values[:] = imputer.fit_transform(ref_data)
     return ref_data[col]
 
+# run loo long
 def knnc(col, ref_data):
     imputer = KNNImputer(n_neighbors=5, weights='uniform')
     ref_data.values[:] = imputer.fit_transform(ref_data)
@@ -102,12 +104,12 @@ def impute(impute_num, impute_cat, data, data_source):
     impute_cat_fn = IMPUTE_CATEGORICAL[impute_cat]
     config = CONFIG_MAP[data_source]
     cols = data.columns
-    num_list, cat_list, others=[], [], []
+    num_list, cat_list=[], []
     """make refernce data"""
     for col in cols:
         feature_type = getattr(config, col)
         if feature_type in [FeatureType.NUMERICAL, FeatureType.DATE]:
-            num_list += [data[col].copy()]
+            num_list += [data[col].copy().astype('int32')]
         elif col != 'sar_flag' and feature_type == FeatureType.CATEGORICAL:
             cat_list += [data[col].copy()]
 
