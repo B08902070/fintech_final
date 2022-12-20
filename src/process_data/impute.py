@@ -28,14 +28,14 @@ def fill_median(col, ref_data):
     return ref_data[col]
 
 def bayesian(col, ref_data):
-    imputer = IterativeImputer(estimator=BayesianRidge(), random_state=0)
+    imputer = IterativeImputer(estimator=BayesianRidge())
     ref_data.values[:] = imputer.fit_transform(ref_data)
 
     return ref_data[col]
 
 # may have error
 def extra_tree(col, ref_data):
-    imputer = IterativeImputer(estimator=ExtraTreesRegressor(n_estimators=50, random_state=0, min_samples_split=1), random_state=0)
+    imputer = IterativeImputer(estimator=ExtraTreesRegressor(n_estimators=50, random_state=0, min_samples_split=1))
     ref_data.values[:] = imputer.fit_transform(ref_data)
 
     return ref_data[col]
@@ -109,7 +109,7 @@ def impute(impute_num, impute_cat, data, data_source):
     for col in cols:
         feature_type = getattr(config, col)
         if feature_type in [FeatureType.NUMERICAL, FeatureType.DATE]:
-            num_list += [data[col].copy().astype('int32')]
+            num_list += [data[col].copy()]
         elif col != 'sar_flag' and feature_type == FeatureType.CATEGORICAL:
             cat_list += [data[col].copy()]
 
