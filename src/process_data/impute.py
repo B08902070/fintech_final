@@ -123,8 +123,8 @@ def impute(impute_num, impute_cat, data, data_source):
             continue
 
         if feature_type == FeatureType.NUMERICAL:
-            data[col] = impute_num_fn(col, ref_data).astype('int32')
+            data[col].values[:] = impute_num_fn(col, ref_data).astype('int32').values[:]
         elif feature_type == FeatureType.CATEGORICAL:
-            data[col] = impute_cat_fn(col, ref_data).astype('category')
+            data[col].values[:] = impute_cat_fn(col, ref_data).astype('category').values[:]
         
     return data
