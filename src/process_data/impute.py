@@ -28,17 +28,17 @@ def fill_median(col, ref_data):
     return ref_data[col]
 
 def bayesian(col, ref_data):
-    imputer = IterativeImputer(estimator=BayesianRidge())
-    ref_data.values[:] = imputer.fit_transform(ref_data)
+    imputer = IterativeImputer(estimator=BayesianRidge(), random_state=0)
+    new_data = imputer.fit_transform(ref_data)
 
-    return ref_data[col]
+    return new_data[col]
 
 # may have error
 def extra_tree(col, ref_data):
-    imputer = IterativeImputer(estimator=ExtraTreesRegressor(n_estimators=50, random_state=0, min_samples_split=1))
-    ref_data.values[:] = imputer.fit_transform(ref_data)
+    imputer = IterativeImputer(estimator=ExtraTreesRegressor(n_estimators=50, random_state=0, min_samples_split=1), random_state=0)
+    new_data = imputer.fit_transform(ref_data)
 
-    return ref_data[col]
+    return new_data[col]
 
 def xgboost_imp(col, ref_data):
     imputer = IterativeImputer(
